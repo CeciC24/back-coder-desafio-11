@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { authorization } from '../middlewares/auth.middleware.js'
-import { passportCall } from '../utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
 
 const EmailsRouter = Router()
 

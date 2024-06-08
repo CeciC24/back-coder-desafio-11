@@ -2,7 +2,7 @@ import passport from 'passport'
 import jwt from 'passport-jwt'
 import GitHubStrategy from 'passport-github2'
 import axios from 'axios';
-import { generateToken } from '../utils.js'
+import { generateToken } from '../utils/jwt.utils.js';
 import config from './environment.config.js'
 
 import UsersModel from '../dao/mongo/models/users.model.js'

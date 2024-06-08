@@ -5,7 +5,7 @@ import ProductsModel from '../dao/mongo/models/products.model.js'
 import CartsModel from '../dao/mongo/models/carts.model.js'
 import paginateFormat from '../paginateFormat.js'
 import { requireAuth, redirectIfLoggedIn } from '../middlewares/auth.middleware.js'
-import { passportCall } from '../utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
 
 const router = Router()
 

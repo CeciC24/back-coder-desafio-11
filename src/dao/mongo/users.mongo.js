@@ -1,4 +1,4 @@
-import { createHash } from '../../utils.js'
+import { createHash } from '../../utils/bcrypt.utils.js'
 import UsersRepository from '../../repositories/users.repository.js'
 
 export default class UserManager {

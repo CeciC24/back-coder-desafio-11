@@ -4,7 +4,7 @@ import passport from 'passport'
 import config from '../config/environment.config.js'
 import AuthManager from '../dao/services/auth.service.js'
 import { authorization } from '../middlewares/auth.middleware.js'
-import { passportCall } from '../utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
 import { CurrentUserDTO } from '../dao/DTOs/user.dto.js'
 
 const SessionsRouter = Router()

@@ -3,7 +3,7 @@ import MessagesManager from '../dao/mongo/messages.mongo.js'
 import MessageDTO from '../dao/DTOs/message.dto.js'
 
 import { authorization } from '../middlewares/auth.middleware.js'
-import { passportCall } from '../utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
 
 const MsgManager = new MessagesManager()
 const MessagesRouter = Router()

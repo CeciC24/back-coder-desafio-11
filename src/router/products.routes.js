@@ -3,7 +3,10 @@ import ProductManager from '../dao/mongo/products.mongo.js'
 import ProductDTO from '../dao/DTOs/product.dto.js'
 
 import { authorization } from '../middlewares/auth.middleware.js'
-import { passportCall } from '../utils.js'
+import { errorTypes } from '../utils/errorTypes.utils.js'
+import { validateProduct } from '../utils/productsError.js'
+import CustomError from '../utils/customError.utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
 
 const ProductMngr = new ProductManager()
 const ProductRouter = Router()
@@ -42,7 +45,7 @@ ProductRouter.post('/', passportCall('current'), authorization('admin'), async (
 		const newProduct = new ProductDTO(productData)
 		res.status(200).send(await ProductMngr.create(newProduct))
 	} catch (error) {
-		res.status(500).send({ error: error.message || 'Error al agregar producto' })
+		res.status(500).send({ error: CustomError(error) })
 	}
 })
 

@@ -1,5 +1,6 @@
 import UsersModel from '../mongo/models/users.model.js'
-import { isValidPassword, generateToken } from '../../utils.js'
+import { generateToken } from '../../utils/jwt.utils.js'
+import { isValidPassword } from '../../utils/bcrypt.utils.js'
 import UserManager from '../mongo/users.mongo.js'
 import config from '../../config/environment.config.js'
 
