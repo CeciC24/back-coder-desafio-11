@@ -12,4 +12,6 @@ export default {
     adminEmail: process.env.ADMIN_EMAIL,
     adminPassword: process.env.ADMIN_PASSWORD,
     tokenCookieName: process.env.TOKEN_COOKIE_NAME,
+    emailUser: process.env.EMAIL_USER,
+    emailPassword: process.env.EMAIL_PASS,
 }

@@ -1,3 +1,5 @@
+import { createRandomProduct } from '../utils/createRandom.utils.js'
+
 // Router imports para Views
 import ViewsRouter from '../router/views.routes.js'
 
@@ -20,11 +22,11 @@ const registerRoutes = (app) => {
 	try {
 		// Rutas para views
 		app.use('/', ViewsRouter)
-	
+
 		// Rutas para File System
 		app.use('/api/fs/products', FSProductRouter)
 		app.use('/api/fs/cart', FSCartRouter)
-	
+
 		// Rutas para MongoDB
 		app.use('/api/products', ProductsRouter)
 		app.use('/api/categories', CategoriesRouter)
@@ -35,6 +37,18 @@ const registerRoutes = (app) => {
 
 		// Otras rutas
 		app.use('/', EmailsRouter)
+
+		app.get('/mockingproducts', async (req, res) => {
+			try {
+				let products = []
+				for (let i = 0; i < 100; i++) {
+					products.push(createRandomProduct())
+				}
+				res.send(products)
+			} catch (error) {
+				console.log(error)
+			}
+		})
 
 	} catch (error) {
 		throw new Error('No se pudieron registrar las rutas: ' + error.message)
