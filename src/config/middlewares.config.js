@@ -2,7 +2,7 @@ import express from 'express'
 import handlebars from "express-handlebars";
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
-import __dirname from '../utils/dirnamePath.js';
+import __dirname from '../dirnamePath.js';
 import initializePassport from './passport.config.js'
 
 export default function middlewaresConfig(app) {
