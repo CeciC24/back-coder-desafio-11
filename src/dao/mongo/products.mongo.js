@@ -6,29 +6,7 @@ export default class ProductManager {
         this.repository = new ProductsRepository()
     }
 
-	isValid(product) {
-		if (
-			!product.title ||
-			!product.description ||
-			!product.code ||
-			!product.price ||
-			!product.stock ||
-			!product.category
-		) {
-			return false
-		}
-		return true
-	}
-
 	async create(newProduct) {
-        const search = await this.repository.findOne(newProduct.code)
-
-        if (search) {
-            throw new Error("No se pudo agregar el producto. El campo 'code' ya existe.")
-        } else if (!this.isValid(newProduct)) {
-            throw new Error('No se pudo agregar el producto. Faltan campos.')
-        }
-
         return await this.repository.create(newProduct)
     }
 
@@ -40,22 +18,21 @@ export default class ProductManager {
         return await this.repository.findById(id)
     }
 
+	async getByCode(code) {
+		return await this.repository.findOne(code)
+	}
+
     async update(id, productData) {
         await this.repository.updateOne(id, productData)
         return await this.repository.findById(id)
     }
 
 	async delete(id) {
-		let response = await this.repository.findByIdAndDelete(id)
-		return response
+		return await this.repository.findByIdAndDelete(id)
 	}
 
 	async getAllWithCategories() {
-		try {
-			return await this.repository.findWithCategories()
-		} catch (error) {
-			console.log('Error al obtener todos los productos')
-		}
+		return await this.repository.findWithCategories()
 	}
 
 	async getPaginated(page, limit, sort, query, populate = null) {

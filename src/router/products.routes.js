@@ -3,15 +3,13 @@ import ProductManager from '../dao/mongo/products.mongo.js'
 import ProductDTO from '../dao/DTOs/product.dto.js'
 
 import { authorization } from '../middlewares/auth.middleware.js'
-import { errorTypes } from '../utils/errorTypes.utils.js'
-import { validateProduct } from '../utils/productsError.js'
-import CustomError from '../utils/customError.utils.js'
 import { passportCall } from '../utils/jwt.utils.js'
+import Validate from '../utils/validate.utils.js'
 
 const ProductMngr = new ProductManager()
 const ProductRouter = Router()
 
-ProductRouter.get('/', async (req, res) => {
+ProductRouter.get('/', async (req, res, next) => {
 	let limit = parseInt(req.query.limit)
 	let page = parseInt(req.query.page)
 	let sort = req.query.sort
@@ -27,46 +25,58 @@ ProductRouter.get('/', async (req, res) => {
 	}
 })
 
-ProductRouter.get('/:pid', async (req, res) => {
+ProductRouter.get('/:pid', async (req, res, next) => {
 	let pid = req.params.pid
 
 	try {
+		Validate.id(pid, 'producto')
+		await Validate.existID(pid, ProductMngr, 'producto')
+
 		let product = await ProductMngr.getById(pid)
 		res.status(200).send(product)
 	} catch (error) {
-		res.status(404).send({ error: 'Producto no encontrado' })
-	}
+		next(error)
+	} 
 })
 
-ProductRouter.post('/', passportCall('current'), authorization('admin'), async (req, res) => {
-	let productData = req.body
-
+ProductRouter.post('/', passportCall('current'), authorization('admin'), async (req, res, next) => {
 	try {
+		let productData = req.body
+
+		Validate.productData(productData)
+		await Validate.existCode(productData.code, ProductMngr)
+
 		const newProduct = new ProductDTO(productData)
 		res.status(200).send(await ProductMngr.create(newProduct))
 	} catch (error) {
-		res.status(500).send({ error: CustomError(error) })
+		next(error)
 	}
 })
 
-ProductRouter.put('/:pid', passportCall('current'), authorization('admin'), async (req, res) => {
+ProductRouter.put('/:pid', passportCall('current'), authorization('admin'), async (req, res, next) => {
 	let pid = req.params.pid
 	let newField = req.body
 
 	try {
+		Validate.id(pid, 'producto')
+		await Validate.existID(pid, ProductMngr, 'producto')
+
 		res.status(200).send(await ProductMngr.update(pid, newField))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al actualizar producto' })
+		next(error)
 	}
 })
 
-ProductRouter.delete('/:pid', passportCall('current'), authorization('admin'), async (req, res) => {
+ProductRouter.delete('/:pid', passportCall('current'), authorization('admin'), async (req, res, next) => {
 	let pid = req.params.pid
 
 	try {
+		Validate.id(pid, 'producto')
+		await Validate.existID(pid, ProductMngr, 'producto')
+		
 		res.status(200).send(await ProductMngr.delete(pid))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al eliminar producto' })
+		next(error)
 	}
 })
 

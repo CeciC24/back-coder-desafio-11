@@ -2,6 +2,7 @@ import createExpressApp from './config/createApp.js'
 import connectDb from './config/db.config.js'
 import middlewaresConfig from './config/middlewares.config.js'
 import registerRoutes from './config/registerRoutes.js'
+import { errorHandler } from './middlewares/errorHandler.middleware.js'
 
 function main(){
 	try {
@@ -15,6 +16,9 @@ function main(){
 		
 		// Registro de rutas
 		registerRoutes(app)
+
+		// Manejo de errores
+		app.use(errorHandler)
 
 	} catch (error) {
 		console.log('Error al inicializar la app: ' + error.message)

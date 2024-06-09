@@ -2,28 +2,29 @@ import { Router } from 'express'
 import CategoryManager from '../dao/mongo/categories.mongo.js'
 import CategoryDTO from '../dao/DTOs/category.dto.js'
 
+import Validate from '../utils/validate.utils.js'
+
 const CategoriesRouter = Router()
 const categoryMngr = new CategoryManager()
 
 CategoriesRouter.get('/', async (req, res) => {
 	try {
 		const categories = await categoryMngr.get()
-		res.json(categories)
+		res.status(201).json(categories)
 	} catch (error) {
 		res.status(500).json({ message: error.message })
 	}
 })
 
-CategoriesRouter.get('/:id', async (req, res) => {
+CategoriesRouter.get('/:id', async (req, res, next) => {
 	try {
 		const categoryId = req.params.id
-		const category = await categoryMngr.getById(categoryId)
-		if (!category) {
-			return res.status(404).json({ message: 'Category not found' })
-		}
-		res.json(category)
+		Validate.id(categoryId, 'categoría')
+		Validate.existID(categoryId, categoryMngr, 'categoría')
+
+		res.status(201).json(await categoryMngr.getById(categoryId))
 	} catch (error) {
-		res.status(500).json({ message: error.message })
+		next(error)
 	}
 })
 
@@ -38,23 +39,27 @@ CategoriesRouter.post('/', async (req, res) => {
 	}
 })
 
-CategoriesRouter.put('/:id', async (req, res) => {
+CategoriesRouter.put('/:id', async (req, res, next) => {
 	try {
 		const categoryId = req.params.id
-		const updatedCategory = await categoryMngr.update(categoryId, req.body)
-		res.json(updatedCategory)
+		Validate.id(categoryId, 'categoría')
+		Validate.existID(categoryId, categoryMngr, 'categoría')
+
+		res.status(201).json(await categoryMngr.update(categoryId, req.body))
 	} catch (error) {
-		res.status(400).json({ message: error.message })
+		next(error)
 	}
 })
 
-CategoriesRouter.delete('/:id', async (req, res) => {
+CategoriesRouter.delete('/:id', async (req, res, next) => {
 	try {
 		const categoryId = req.params.id
-		const response = await categoryMngr.delete(categoryId)
-		res.json(response)
+		Validate.id(categoryId, 'categoría')
+		Validate.existID(categoryId, categoryMngr, 'categoría')
+
+		res.status(201).json(await categoryMngr.delete(categoryId))
 	} catch (error) {
-		res.status(500).json({ message: error.message })
+		next(error)
 	}
 })
 

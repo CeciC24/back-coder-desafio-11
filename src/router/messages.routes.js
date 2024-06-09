@@ -5,6 +5,8 @@ import MessageDTO from '../dao/DTOs/message.dto.js'
 import { authorization } from '../middlewares/auth.middleware.js'
 import { passportCall } from '../utils/jwt.utils.js'
 
+import Validate from '../utils/validate.utils.js'
+
 const MsgManager = new MessagesManager()
 const MessagesRouter = Router()
 
@@ -16,13 +18,15 @@ MessagesRouter.get('/', async (req, res) => {
 	}
 })
 
-MessagesRouter.get('/:mid', async (req, res) => {
+MessagesRouter.get('/:mid', async (req, res, next) => {
 	let mid = req.params.mid
 
 	try {
+		Validate.id(mid, 'mensaje')
+		await Validate.existID(mid, MsgManager, 'mensaje')
 		res.status(200).send(await MsgManager.getById(mid))
 	} catch (error) {
-		res.status(404).send({ error: 'Mensaje no encontrado' })
+		next(error)
 	}
 })
 

@@ -4,6 +4,8 @@ import CartManager from '../dao/mongo/carts.mongo.js'
 import { authorization } from '../middlewares/auth.middleware.js'
 import { passportCall } from '../utils/jwt.utils.js'
 
+import Validate from '../utils/validate.utils.js'
+
 const CartMngr = new CartManager()
 const CartsRouter = Router()
 
@@ -15,13 +17,15 @@ CartsRouter.get('/', async (req, res) => {
 	}
 })
 
-CartsRouter.get('/:cid', async (req, res) => {
+CartsRouter.get('/:cid', async (req, res, next) => {
 	let cid = req.params.cid
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
 		res.status(200).send(await CartMngr.getById(cid))
 	} catch (error) {
-		res.status(404).send({ error: 'Carrito no encontrado' })
+		next(error)
 	}
 })
 
@@ -34,68 +38,86 @@ CartsRouter.post('/', async (req, res) => {
 	}
 })
 
-CartsRouter.post('/:cid/product/:pid', passportCall('current'), authorization('user'), async (req, res) => {
+CartsRouter.post('/:cid/product/:pid', passportCall('current'), authorization('user'), async (req, res, next) => {
 	let cid = req.params.cid
 	let pid = req.params.pid
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
+		Validate.id(pid, 'producto')
+		await Validate.existID(pid, ProductMngr, 'producto')
 		res.status(200).send(await CartMngr.addProductToCart(cid, pid))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al agregar producto al carrito | ' + error.message })
+		next(error)
 	}
 })
 
-CartsRouter.delete('/:cid/product/:pid', async (req, res) => {
+CartsRouter.delete('/:cid/product/:pid', async (req, res, next) => {
 	let cid = req.params.cid
 	let pid = req.params.pid
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
+		Validate.id(pid, 'producto')
+		await Validate.existID(pid, ProductMngr, 'producto')
 		res.status(200).send(await CartMngr.deleteProductFromCart(cid, pid))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al eliminar producto del carrito | ' + error.message })
+		next(error)
 	}
 })
 
-CartsRouter.delete('/:cid', async (req, res) => {
+CartsRouter.delete('/:cid', async (req, res, next) => {
 	let cid = req.params.cid
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
 		res.status(200).send(await CartMngr.empty(cid))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al vaciar carrito' })
+		next(error)
 	}
 })
 
-CartsRouter.put('/:cid', async (req, res) => {
+CartsRouter.put('/:cid', async (req, res, next) => {
 	let cid = req.params.cid
 	let newCartProducts = req.body
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
 		res.status(200).send(await CartMngr.update(cid, newCartProducts))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al actualizar carrito' })
+		next(error)
 	}
 })
 
-CartsRouter.put('/:cid/product/:pid', async (req, res) => {
+CartsRouter.put('/:cid/product/:pid', async (req, res, next) => {
 	let cid = req.params.cid
 	let pid = req.params.pid
 	let newQuantity = req.body
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
+		Validate.id(pid, 'producto')
+		await Validate.existID(pid, ProductMngr, 'producto')
 		res.status(200).send(await CartMngr.updateProductInCart(cid, pid, newQuantity))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al actualizar la cantidad del producto en carrito' })
+		next(error)
 	}
 })
 
-CartsRouter.get('/:cid/purchase', async (req, res) => {
+CartsRouter.get('/:cid/purchase', async (req, res, next) => {
 	let cid = req.params.cid
 
 	try {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, CartMngr, 'carrito')
 		res.status(200).send(await CartMngr.purchaseCart(cid, req.user.user))
 	} catch (error) {
-		res.status(500).send({ error: 'Error al realizar la compra: ' + error.message })
+		next(error)
 	}
 })
 
